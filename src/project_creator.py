@@ -1,7 +1,7 @@
-from .interfaces.file_manager_interface import IFileManager
-from .templates.base_template import base_template
-from .models.project_config import ProjectConfig
-from .interfaces.project_creator_interface import IProjectCreator
+from .core.interfaces.file_manager_interface import IFileManager
+from .core.templates.base_template import base_template
+from .core.models.project_config import ProjectConfig
+from .core.interfaces.project_creator_interface import IProjectCreator
 from typing import Dict, Any
 
 class ProjectCreator(IProjectCreator):    

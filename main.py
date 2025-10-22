@@ -1,4 +1,4 @@
-from src.core.project_creator import ProjectCreator
+from src.project_creator import ProjectCreator
 from src.core.infraestructure.file_manager import FileManager
 from src.cli.questionnaire import ask_project_config
 
