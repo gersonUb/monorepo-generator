@@ -1,4 +1,4 @@
-from file_manager import FileManager;
+from core.interfaces.file_manager_interface import FileManager;
 
 class MonorepoBootstrapper:
     def __init__(self, project_name: str):
