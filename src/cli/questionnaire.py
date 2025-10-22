@@ -1,7 +1,7 @@
 from src.core.models.project_config import ProjectConfig, FrontendFramework, BackendFramework
 
 def ask_project_config() -> ProjectConfig:
-    print("🚀 Project Generator\n")
+    print(" Project Generator\n")
     
     name = _ask_project_name()
     frontend = _ask_frontend()
@@ -12,7 +12,7 @@ def ask_project_config() -> ProjectConfig:
 
 def _ask_project_name() -> str:
     while True:
-        name = input("Name project").strip()
+        name = input("Name project: ").strip()
         if name:
             return name
         return "new-project"
@@ -23,7 +23,7 @@ def _ask_frontend() -> FrontendFramework:
     print("  1) React")
     
     while True:
-        choice = input("...").strip() or "1"
+        choice = input("... ").strip() or "1"
         
         if choice in {"1", "react", "r"}:
             return FrontendFramework.REACT
@@ -37,7 +37,7 @@ def _ask_backend() -> BackendFramework:
     print("  2) Node.js (Express)")
     
     while True:
-        choice = input("...").strip()
+        choice = input("... ").strip()
         
         if choice in {"1", "fastapi", "fast", "python"}:
             return BackendFramework.FASTAPI

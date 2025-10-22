@@ -1,5 +1,5 @@
 from pathlib import Path;
-from core.interfaces import IFileManager;
+from ..interfaces.file_manager_interface import IFileManager;
 
 class FileManager(IFileManager):
     def __init__(self, project_name: str):
