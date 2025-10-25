@@ -1,28 +1,29 @@
+# src/services/command_runner.py
 import subprocess
+import sys
 from typing import List
 
 class CommandRunner:
-    @staticmethod
-    def run(command: List[str], cwd: str): 
-            try:
-                description = f"Running: {' '.join(command)}"
-                print(f"{description} in {cwd}")
-                
-                subprocess.run(
-                    command, 
-                    check=True, 
-                    cwd=cwd, 
-                    text=True, 
-                    capture_output=False
-                )
-                print(f"Success in execution {command[0]}.")
-                
-            except FileNotFoundError:
-                program_name = command[0]
-                print(f"Error: The program '{program_name}' was not found on your system.")
-                raise
-                
-            except subprocess.CalledProcessError as e:
-                print(f"Error during execution of {command[0]}.")
-                print(f"The process ended with return code:{e.returncode}")
-                raise
+    
+    def run(self, command: List[str], cwd: str = ".", input_text: str = None):
+        print(f" Running: {' '.join(command)}  (in directory: {cwd})")
+        
+        try:
+            subprocess.run(
+                command, 
+                cwd=cwd, 
+                check=True,
+                text=True,
+                input=input_text
+            )
+
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Command execution failed! ❌")
+            print(f"Command: {e.cmd}")
+            print(f"Return Code: {e.returncode}")
+            raise e
+            
+        except FileNotFoundError as e:
+            print(f"❌ Error! Command not found: {command[0]}")
+            print("Please ensure the tool is installed and in your system PATH.")
+            raise e
