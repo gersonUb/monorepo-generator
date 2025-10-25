@@ -1,25 +1,40 @@
 from .core.interfaces.file_manager_interface import IFileManager
-from .core.templates.base_template import base_template
 from .core.models.project_config import ProjectConfig
-from .core.interfaces.project_creator_interface import IProjectCreator
-from typing import Dict, Any
+from .services.command_runner import CommandRunner
+from typing import List, Callable, Any
 
-class ProjectCreator(IProjectCreator):    
-    def __init__(self, file_manager: IFileManager):
+BuilderFunction = Callable[[ProjectConfig, IFileManager, CommandRunner], None]
+
+class ProjectCreator:
+    
+    def __init__(self, file_manager: IFileManager, runner: CommandRunner):
         self.file_manager = file_manager
+        self.runner = runner
+        self._builders: List[BuilderFunction] = []
+
+    def add_builder(self, builder_func: BuilderFunction):
+        print(f"Builder '{builder_func.__name__}' registered.")
+        self._builders.append(builder_func)
 
     def create_project(self, config: ProjectConfig):
-        structure = base_template(config.name)
-        self._create_recursive(structure)
+        print(f"Starting project creation: {config.name}...")
+        
+        if not self._builders:
+            print("No builders registered. Nothing to create.")
+            return
 
-    def _create_recursive(self, structure: Dict[str, Any], base_path: str = ""):
-        for name, content in structure.items():
-            current_path = f"{base_path}/{name}" if base_path else name
+        try:
+            for builder in self._builders:
+                print(f"\n--- Running Builder: {builder.__name__} ---")
+                builder(
+                    config=config,
+                    file_manager=self.file_manager,
+                    runner=self.runner
+                )
+            
+            print(f"\n Project '{config.name}' created successfully!")
 
-            if isinstance(content, dict):
-                self.file_manager.create_folder(current_path)
-                self._create_recursive(content, current_path)
-            elif isinstance(content, str):
-                self.file_manager.create_file(current_path, content)
-            else:
-                self.file_manager.create_folder(current_path)
+        except Exception as e:
+            print(f"\n FATAL ERROR during creation: {e}")
+            print("Build process stopped.")
+            raise e
