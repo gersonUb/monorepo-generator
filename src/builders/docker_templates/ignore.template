@@ -1,0 +1,27 @@
+# Git
+.git
+.gitignore
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Node
+**/node_modules
+**/npm-debug.log
+
+# Python
+**/__pycache__
+**/.venv
+**/*.pyc
+
+# Env
+.env
+.env.*
+!.env.example

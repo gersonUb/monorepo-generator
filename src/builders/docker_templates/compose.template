@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .. 
+      dockerfile: .docker/dockerfile
+      target: frontend 
+    ports:
+      - "${FRONTEND_PORT}:5173"
+    volumes:
+      - ../apps/frontend:/app
+      - /app/node_modules
+    container_name: {{PROJECT_NAME}}-frontend
+    env_file:
+      - ./.env
+
+  api:
+    build:
+      context: ..
+      dockerfile: .docker/dockerfile
+      target: api 
+    ports:
+      - "${API_PORT}:8000"
+    volumes:
+      - ../apps/api:/app/apps/api
+      - ../packages/domain:/app/packages/domain
+      - /app/apps/api/.venv
+      - /app/packages/domain/.venv
+    container_name: {{PROJECT_NAME}}-api
+    env_file:
+      - ./.env

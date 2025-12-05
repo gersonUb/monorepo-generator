@@ -1,0 +1,29 @@
+FROM python:3.11-slim AS api
+
+WORKDIR /app
+
+# Instalar Poetry
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+
+# Instalar dependencias del DOMAIN
+COPY ./packages/domain/pyproject.toml ./packages/domain/poetry.lock /app/packages/domain/
+WORKDIR /app/packages/domain
+RUN poetry install --no-root
+
+# Instalar dependencias del API
+WORKDIR /app
+COPY ./apps/api/pyproject.toml ./apps/api/poetry.lock /app/apps/api/
+WORKDIR /app/apps/api
+RUN poetry install --no-root --no-dev
+
+# Copiar el código fuente
+WORKDIR /app
+COPY ./packages/domain /app/packages/domain
+COPY ./apps/api /app/apps/api
+
+# Establecer el directorio de trabajo final para la API
+WORKDIR /app/apps/api
+
+EXPOSE 8000
+CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
