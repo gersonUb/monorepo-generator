@@ -5,31 +5,7 @@ from typing import Optional
 from ..services.command_runner import CommandRunner
 from ..core.interfaces.file_manager_interface import IFileManager
 from ..core.models.project_config import ProjectConfig
-
-def _find_executable(name: str) -> Optional[str]:
-    """
-    Finds an executable in common locations, bypassing a broken PATH.
-    """
-    path_from_which = shutil.which(name)
-    if path_from_which:
-        return path_from_which
-
-    # Check standard C:\Program Files\nodejs (for npm.cmd)
-    program_files = os.environ.get("ProgramFiles", "C:\\Program Files")
-    node_dir = Path(program_files) / "nodejs"
-    exe_path_pf = node_dir / f"{name}.cmd"
-    
-    if exe_path_pf.exists():
-        return str(exe_path_pf)
-
-    # Check %APPDATA%\npm (global npm install dir, for yarn.cmd)
-    appdata = os.environ.get("APPDATA")
-    if appdata:
-        npm_global_dir = Path(appdata) / "npm"
-        exe_path_appdata = npm_global_dir / f"{name}.cmd"
-        if exe_path_appdata.exists():
-            return str(exe_path_appdata)
-    return None
+from src.services.executable_finder import find_executable
 
 def create_frontend(
     config: ProjectConfig, 
@@ -43,7 +19,8 @@ def create_frontend(
     pkg_name = config.admin_package.value.lower()
     
     print(f"Verifying executable: '{pkg_name}'...")
-    pkg_exe_path = _find_executable(pkg_name)
+
+    pkg_exe_path =find_executable(pkg_name)
     
     if pkg_exe_path is None:
         print(f"❌ FATAL: Could not find '{pkg_name}' executable.")
