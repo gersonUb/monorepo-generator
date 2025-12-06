@@ -3,10 +3,6 @@ from ..core.models.project_config import ProjectConfig, BackendFramework, Admin_
 
 class DockerContentGenerator:
     def __init__(self, templates_dir: Path):
-        """
-        Recibe la ruta de las plantillas por inyección de dependencias.
-        Esto facilita el testing y desacopla la clase del sistema de archivos.
-        """
         self.templates_dir = templates_dir
 
     def get_docker_compose_content(self, config: ProjectConfig) -> str:
