@@ -2,7 +2,7 @@ from pathlib import Path
 from ..services.command_runner import CommandRunner
 from ..core.interfaces.file_manager_interface import IFileManager
 from ..core.models.project_config import ProjectConfig
-from .scripts.docker_content_generator import (
+from ..templates.docker_templates import (
     get_docker_compose_content,
     get_docker_compose_test_content,
     get_monolithic_dockerfile,
