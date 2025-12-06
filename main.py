@@ -1,8 +1,8 @@
+from src.cli.adapters.iteractive_console import InteractiveConsoleUI
 from src.project_creator import ProjectCreator
 from src.core.infrastructure.file_manager import FileManager
 from src.cli.questionnaire import ask_project_config
 from src.services.command_runner import CommandRunner 
-
 from src.builders.base_structure_creator import create_base_structure
 from src.builders.fronted_creator import create_frontend
 from src.builders.backend_creator import create_backend
@@ -10,7 +10,8 @@ from src.builders.domain_creator import create_domain
 from src.builders.docker_creator import create_docker
 
 def main():
-    config = ask_project_config()
+    ui = InteractiveConsoleUI()
+    config = ask_project_config(ui)
 
     file_manager = FileManager(".") 
     runner = CommandRunner()
