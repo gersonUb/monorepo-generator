@@ -12,7 +12,10 @@ from ...core.models.project_config import (
     Admin_package
 )
 from ..interfaces.ui_provider import IUserInterface
+from ...core.exceptions import UserGoBack
+
 console = Console()
+BACK_ACTION = "__BACK__"
 
 class InteractiveConsoleUI(IUserInterface):
     def __init__(self):
@@ -27,14 +30,13 @@ class InteractiveConsoleUI(IUserInterface):
         console.print("")
 
     def _execute_safe(self, prompt):
-        """
-        Ejecuta el prompt. Si el resultado es None (Salir), 
-        lanza KeyboardInterrupt para que main.py cierre todo.
-        """
         result = prompt.execute()
         
         if result is None:
             raise KeyboardInterrupt 
+            
+        if result == BACK_ACTION:
+            raise UserGoBack()
             
         return result
 
@@ -47,53 +49,6 @@ class InteractiveConsoleUI(IUserInterface):
             validate=lambda result: len(result) > 0,
             invalid_message="Name cannot be empty",
         ).execute()
-
-    def ask_admin_package(self) -> Admin_package:
-        prompt = inquirer.select(
-            message="Select Package Manager:",
-            choices=[
-                Choice(value=Admin_package.NPM, name="npm"),
-                Choice(value=Admin_package.YARN, name="yarn"),
-                Separator(""),
-                Choice(value=None, name="❌ exit"), 
-            ],
-            default=Admin_package.NPM,
-            pointer="❯",
-            qmark="📦",
-        )
-        return self._execute_safe(prompt)
-
-    def ask_frontend_framework(self) -> FrontendFramework:
-        prompt = inquirer.select(
-            message="Select Frontend Framework:",
-            choices=[
-                Choice(value=FrontendFramework.REACT, name="React"),
-                Choice(value=FrontendFramework.VUE, name="Vue"),
-                Choice(value=FrontendFramework.ANGULAR, name="Angular"),
-                Separator(""),
-                Choice(value=None, name="❌ exit"), 
-                
-            ],
-            default=FrontendFramework.REACT,
-            pointer="❯",
-            qmark="💻",
-        )
-        return self._execute_safe(prompt)
-
-    def ask_backend_framework(self) -> BackendFramework:
-        prompt = inquirer.select(
-            message="Select Backend Framework:",
-            choices=[
-                Choice(value=BackendFramework.FASTAPI, name="Python (FastAPI)"),
-                Choice(value=BackendFramework.NODE, name="Node.js (Express)"),
-                Separator(""),
-                Choice(value=None, name="❌ exit"), 
-            ],
-            default=BackendFramework.FASTAPI,
-            pointer="❯",
-            qmark="🐍",
-        )
-        return self._execute_safe(prompt)
     
     def ask_destination_path(self) -> Path:
         prompt = inquirer.select(
@@ -102,7 +57,8 @@ class InteractiveConsoleUI(IUserInterface):
                 Choice(value="current", name="Current Directory (.)"),
                 Choice(value="custom", name="Choose Folder... 📂"),
                 Separator(""),
-                Choice(value=None, name="❌ exit"), # Agregamos salir aquí también por consistencia
+                Choice(value=BACK_ACTION, name="🔙 Back"),
+                Choice(value=None, name="❌ Exit"),
             ],
             default="current",
             pointer="❯",
@@ -131,6 +87,55 @@ class InteractiveConsoleUI(IUserInterface):
             return Path.cwd()
 
         return Path(folder_selected)
+
+    def ask_admin_package(self) -> Admin_package:
+        prompt = inquirer.select(
+            message="Select Package Manager:",
+            choices=[
+                Choice(value=Admin_package.NPM, name="npm"),
+                Choice(value=Admin_package.YARN, name="yarn"),
+                Separator(""),
+                Choice(value=BACK_ACTION, name="🔙 Back"),
+                Choice(value=None, name="❌ Exit"), 
+            ],
+            default=Admin_package.NPM,
+            pointer="❯",
+            qmark="📦",
+        )
+        return self._execute_safe(prompt)
+
+    def ask_frontend_framework(self) -> FrontendFramework:
+        prompt = inquirer.select(
+            message="Select Frontend Framework:",
+            choices=[
+                Choice(value=FrontendFramework.REACT, name="React"),
+                Choice(value=FrontendFramework.VUE, name="Vue"),
+                Choice(value=FrontendFramework.ANGULAR, name="Angular"),
+                Separator(""),
+                Choice(value=BACK_ACTION, name="🔙 Back"),
+                Choice(value=None, name="❌ Exit"),
+            ],
+            default=FrontendFramework.REACT,
+            pointer="❯",
+            qmark="💻",
+        )
+        return self._execute_safe(prompt)
+
+    def ask_backend_framework(self) -> BackendFramework:
+        prompt = inquirer.select(
+            message="Select Backend Framework:",
+            choices=[
+                Choice(value=BackendFramework.FASTAPI, name="Python (FastAPI)"),
+                Choice(value=BackendFramework.NODE, name="Node.js (Express)"),
+                Separator(""),
+                Choice(value=BACK_ACTION, name="🔙 Back"),
+                Choice(value=None, name="❌ Exit"), 
+            ],
+            default=BackendFramework.FASTAPI,
+            pointer="❯",
+            qmark="🐍",
+        )
+        return self._execute_safe(prompt)
         
     def show_success(self, message: str):
         console.print("")
