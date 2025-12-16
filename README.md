@@ -6,6 +6,12 @@ Una herramienta CLI interactiva para generar estructuras de proyectos robustas b
 
 * **Python 3.10** o superior.
 * **Git** instalado.
+* **Node.js**: Versión **v20.0.0** o superior.
+    > *Nota: Vite requiere Node 20+ en sus versiones recientes.*
+    > Si ves un error como `The engine "node" is incompatible`, actualiza tu Node.
+    ```bash
+    node -v  # Verifica tu versión
+    ```
 
 ---
 
@@ -68,6 +74,9 @@ python main.py
 ##  Características Principales
 
 * **Interfaz Interactiva:** Selección visual de opciones con soporte de mouse y teclado.
+  <img width="1734" height="579" alt="image" src="https://github.com/user-attachments/assets/a86953d8-e4de-4a2b-b408-3d3328a60144" />
+  <img width="1739" height="642" alt="image" src="https://github.com/user-attachments/assets/b66d8634-9773-4c2b-8a6d-52c8ebe78114" />
+
 * **Arquitectura Limpia:** Genera una estructura de carpetas profesional tipo Monorepo.
 * **Atomicidad (Rollback):** Si algo falla durante la creación (ej. error de red), el sistema limpia automáticamente los archivos parciales para mantener tu entorno limpio.
 * **UI Moderna:** Feedback visual con barras de carga y colores gracias a la librería `Rich`.
@@ -85,6 +94,13 @@ my-project/
 ├── docker-compose.yml    # Configuración de Docker
 └── README.md
 ```
+### Tech Stack en el Domain
+Dependiendo del backend seleccionado, la carpeta `domain` se pre-configura con las mejores herramientas para modelado de datos:
+
+| Backend Elegido | Stack del Domain Generado | Librerías Incluidas |
+| :--- | :--- | :--- |
+| **Python (FastAPI)** | **Poetry Package** | • **Pydantic V2** (Validación)<br>• **SQLAlchemy** (ORM Core)<br>• **Passlib** (Hashing)<br>• **Python-Jose** (JWT tokens) |
+| **Node.js** | **NPM Package** | • **TypeScript** (Tipado estricto)<br>• **Prisma** (ORM & Schema definition)<br>• **Zod** (Validación opcional) |
 
 ##  Contribución
 
