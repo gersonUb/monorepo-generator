@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 
 
 class FrontendFramework(Enum):
@@ -22,6 +23,11 @@ class Admin_package(Enum):
 @dataclass
 class ProjectConfig:
     name: str
+    path: Path
     admin_package: Admin_package
     frontend: FrontendFramework
     backend: BackendFramework
+
+    @property
+    def full_path(self) -> Path:
+        return self.path / self.name

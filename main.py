@@ -1,4 +1,4 @@
-from src.cli.adapters.iteractive_console import InteractiveConsoleUI
+from src.cli.adapters.interactive_console import InteractiveConsoleUI
 from src.project_creator import ProjectCreator
 from src.core.infrastructure.file_manager import FileManager
 from src.cli.questionnaire import ask_project_config

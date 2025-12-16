@@ -1,4 +1,7 @@
 from InquirerPy import inquirer
+import tkinter as tk
+from tkinter import filedialog
+from pathlib import Path
 from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 from rich.console import Console
@@ -72,6 +75,38 @@ class InteractiveConsoleUI(IUserInterface):
             pointer="❯",
             qmark="🐍",
         ).execute()
+    
+    def ask_destination_path(self) -> Path:
+        choice = inquirer.select(
+            message="Where should we create the project?",
+            choices=[
+                Choice(value="current", name="Current Directory (.)"),
+                Choice(value="custom", name="Choose Folder... 📂"),
+            ],
+            default="current",
+            pointer="❯",
+            qmark="📍"
+        ).execute()
+
+        if choice == "current":
+            return Path.cwd()
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes('-topmost', True)
+        
+        print("  Waiting for folder selection...")
+        folder_selected = filedialog.askdirectory(
+            title="Select Destination Folder",
+            mustexist=True
+        )
+        
+        root.destroy()
+
+        if not folder_selected:
+            console.print("[yellow]⚠ No folder selected. Using current directory.[/yellow]")
+            return Path.cwd()
+
+        return Path(folder_selected)
         
     def show_success(self, message: str):
         console.print("")
