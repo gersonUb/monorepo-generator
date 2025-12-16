@@ -1,3 +1,4 @@
+import sys
 from src.cli.adapters.interactive_console import InteractiveConsoleUI
 from src.project_creator import ProjectCreator
 from src.core.infrastructure.file_manager import FileManager
@@ -11,20 +12,29 @@ from src.builders.docker_creator import create_docker
 
 def main():
     ui = InteractiveConsoleUI()
-    config = ask_project_config(ui)
 
-    file_manager = FileManager(".") 
-    runner = CommandRunner()
+    try:
+        config = ask_project_config(ui)
 
-    creator = ProjectCreator(file_manager, runner)
+        file_manager = FileManager(".") 
+        runner = CommandRunner()
 
-    creator.add_builder(create_base_structure) 
-    creator.add_builder(create_frontend)
-    creator.add_builder(create_backend)
-    creator.add_builder(create_domain)
-    creator.add_builder(create_docker)
-    
-    creator.create_project(config)
+        creator = ProjectCreator(file_manager, runner)
+
+        creator.add_builder(create_base_structure) 
+        creator.add_builder(create_frontend)
+        creator.add_builder(create_backend)
+        creator.add_builder(create_domain)
+        creator.add_builder(create_docker)
+        
+        creator.create_project(config)
+
+    except KeyboardInterrupt:
+        print("\n\n Exiting...")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n❌ Error: {e}")
+        sys.exit(1)
 
     print(f"\n Project '{config.name}' create correctly!")
 

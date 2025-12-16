@@ -15,7 +15,6 @@ from ..interfaces.ui_provider import IUserInterface
 console = Console()
 
 class InteractiveConsoleUI(IUserInterface):
-    
     def __init__(self):
         self._print_header()
 
@@ -26,6 +25,18 @@ class InteractiveConsoleUI(IUserInterface):
             padding=(1, 2)
         ))
         console.print("")
+
+    def _execute_safe(self, prompt):
+        """
+        Ejecuta el prompt. Si el resultado es None (Salir), 
+        lanza KeyboardInterrupt para que main.py cierre todo.
+        """
+        result = prompt.execute()
+        
+        if result is None:
+            raise KeyboardInterrupt 
+            
+        return result
 
     def ask_project_name(self, default: str) -> str:
         return inquirer.text(
@@ -38,58 +49,71 @@ class InteractiveConsoleUI(IUserInterface):
         ).execute()
 
     def ask_admin_package(self) -> Admin_package:
-        return inquirer.select(
+        prompt = inquirer.select(
             message="Select Package Manager:",
             choices=[
                 Choice(value=Admin_package.NPM, name="npm"),
                 Choice(value=Admin_package.YARN, name="yarn"),
+                Separator(""),
+                Choice(value=None, name="❌ exit"), 
             ],
             default=Admin_package.NPM,
             pointer="❯",
             qmark="📦",
-        ).execute()
+        )
+        return self._execute_safe(prompt)
 
     def ask_frontend_framework(self) -> FrontendFramework:
-        return inquirer.select(
+        prompt = inquirer.select(
             message="Select Frontend Framework:",
             choices=[
                 Choice(value=FrontendFramework.REACT, name="React"),
                 Choice(value=FrontendFramework.VUE, name="Vue"),
                 Choice(value=FrontendFramework.ANGULAR, name="Angular"),
+                Separator(""),
+                Choice(value=None, name="❌ exit"), 
+                
             ],
             default=FrontendFramework.REACT,
             pointer="❯",
             qmark="💻",
-        ).execute()
+        )
+        return self._execute_safe(prompt)
 
     def ask_backend_framework(self) -> BackendFramework:
-        return inquirer.select(
+        prompt = inquirer.select(
             message="Select Backend Framework:",
             choices=[
                 Choice(value=BackendFramework.FASTAPI, name="Python (FastAPI)"),
                 Choice(value=BackendFramework.NODE, name="Node.js (Express)"),
-                Separator(),
-                Choice(value=None, name="Django (Coming soon)", enabled=False),
+                Separator(""),
+                Choice(value=None, name="❌ exit"), 
             ],
             default=BackendFramework.FASTAPI,
             pointer="❯",
             qmark="🐍",
-        ).execute()
+        )
+        return self._execute_safe(prompt)
     
     def ask_destination_path(self) -> Path:
-        choice = inquirer.select(
+        prompt = inquirer.select(
             message="Where should we create the project?",
             choices=[
                 Choice(value="current", name="Current Directory (.)"),
                 Choice(value="custom", name="Choose Folder... 📂"),
+                Separator(""),
+                Choice(value=None, name="❌ exit"), # Agregamos salir aquí también por consistencia
             ],
             default="current",
             pointer="❯",
             qmark="📍"
-        ).execute()
+        )
+        
+        choice = self._execute_safe(prompt)
 
         if choice == "current":
             return Path.cwd()
+            
         root = tk.Tk()
         root.withdraw()
         root.attributes('-topmost', True)
