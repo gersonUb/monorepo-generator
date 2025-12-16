@@ -34,7 +34,15 @@ def create_fastapi_project(
     print("\nStep 4: Installing dev dependencies (pytest, httpx, ruff)...")
     runner.run([poetry_exe, "add", "--group", "dev", "pytest", "httpx", "ruff"], cwd=api_path_str)
 
-    print("\nStep 5: Creating source files (src/main.py)...")
+    print("\nStep 5: Linking Shared Domain...")
+    domain_folder = api_path.parent.parent / "domain"
+    if domain_folder.exists():
+        print(f"   Found domain at: {domain_folder}")
+        runner.run([poetry_exe, "add", "../../domain"], cwd=api_path_str)
+    else:
+        print("⚠️ Domain folder not found. Skipping linkage.")
+
+    print("\nStep 6: Creating source files (src/main.py)...")
     src_path = api_path / "src"
     file_manager.create_folder(str(src_path))
     file_manager.create_file(str(src_path / "__init__.py"), "")
@@ -44,7 +52,10 @@ def create_fastapi_project(
         "app = FastAPI()\n\n"
         "@app.get(\"/\")\n"
         "def read_root():\n"
-        "    return {\"Hello\": \"From FastAPI\"}\n"
+        "    return {\n"
+        "       \"Hello\": \"From FastAPI\",\n"
+        "       \"Architecture\": \"Monorepo Linked! 🔗\"\n"
+        "    }\n"
     )
     file_manager.create_file(str(src_path / "main.py"), main_py_content)
     

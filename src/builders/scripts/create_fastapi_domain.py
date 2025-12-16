@@ -27,7 +27,7 @@ def create_fastapi_domain(
     runner.run([poetry_exe, "config", "virtualenvs.in-project", "true", "--local"], cwd=domain_path_str)
 
     print("\nStep 3: Installing main dependencies (sqlalchemy, passlib, jose)...")
-    main_deps = ["sqlalchemy", "passlib[bcrypt]", "python-jose[cryptography]"]
+    main_deps = ["sqlalchemy", "passlib[bcrypt]", "python-jose[cryptography]", "pydantic"]
     runner.run([poetry_exe, "add"] + main_deps, cwd=domain_path_str)
 
     print("\nStep 4: Installing dev dependencies (pytest, ruff)...")

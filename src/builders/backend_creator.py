@@ -2,8 +2,8 @@ from pathlib import Path
 from ..services.command_runner import CommandRunner
 from ..core.interfaces.file_manager_interface import IFileManager
 from ..core.models.project_config import ProjectConfig, BackendFramework
-from .scripts.create_fastapi import create_fastapi_project
-from .scripts.create_node import create_node_project
+from .scripts.create_fastapi_backend import create_fastapi_project
+from .scripts.create_node_backend import create_node_project
 from ..services.executable_finder import find_executable
 
 def create_backend(
