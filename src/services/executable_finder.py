@@ -1,4 +1,5 @@
 import os
+import platform
 import shutil
 from pathlib import Path
 from typing import Optional
@@ -11,25 +12,30 @@ def find_executable(name: str) -> Optional[str]:
     if path_from_which:
         return path_from_which
 
-    program_files = os.environ.get("ProgramFiles", "C:\\Program Files")
-    node_dir = Path(program_files) / "nodejs"
-    exe_path_pf = node_dir / f"{name}.cmd"
-    
-    if exe_path_pf.exists():
-        return str(exe_path_pf)
+    home = Path.home()
+    system = platform.system().lower() 
 
-    appdata = os.environ.get("APPDATA")
-    if appdata:
-        npm_global_dir = Path(appdata) / "npm"
-        exe_path_appdata = npm_global_dir / f"{name}.cmd"
-        if exe_path_appdata.exists():
-            return str(exe_path_appdata)
+    if system != 'windows':
+        linux_local_bin = home / ".local" / "bin" / name
+        if linux_local_bin.exists() and os.access(linux_local_bin, os.X_OK):
+            return str(linux_local_bin)
+    else:
+        program_files = os.environ.get("ProgramFiles", "C:\\Program Files")
+        node_pf = Path(program_files) / "nodejs" / f"{name}.cmd"
+        if node_pf.exists(): return str(node_pf)
 
-    if name == "poetry":
-        local_appdata = os.environ.get("LOCALAPPDATA")
-        if local_appdata:
-            poetry_bin = Path(local_appdata) / "pypoetry" / "venv" / "Scripts" / "poetry.exe"
-            if poetry_bin.exists():
-                return str(poetry_bin)
-                
+        appdata = os.environ.get("APPDATA")
+        if appdata:
+            npm_global = Path(appdata) / "npm" / f"{name}.cmd"
+            if npm_global.exists(): return str(npm_global)
+
+        if name == "poetry":
+            local_appdata = os.environ.get("LOCALAPPDATA")
+            if local_appdata:
+                poetry_bin = Path(local_appdata) / "pypoetry" / "venv" / "Scripts" / "poetry.exe"
+                if poetry_bin.exists(): return str(poetry_bin)
+
+                poetry_bin_alt = Path(appdata) / "pypoetry" / "venv" / "Scripts" / "poetry.exe"
+                if poetry_bin_alt.exists(): return str(poetry_bin_alt)
+
     return None
