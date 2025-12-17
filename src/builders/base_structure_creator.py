@@ -28,9 +28,10 @@ def _create_recursive(file_manager: IFileManager, structure: Dict[str, Any], bas
             file_manager.create_folder(current_path)
 
 def create_base_structure(config: ProjectConfig, file_manager: IFileManager, runner: CommandRunner):
-    print(f"Creating project skeleton in '{config.name}'...")
+    full_project_path = config.path / config.name
+    print(f"Creating project skeleton in '{full_project_path}'...")
     
     structure = _base_template(config.name)
+    _create_recursive(file_manager, structure, base_path=str(config.path))
     
-    _create_recursive(file_manager, structure, base_path="")
     print("Base skeleton created.")
