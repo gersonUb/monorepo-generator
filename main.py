@@ -1,4 +1,5 @@
 import sys
+import os
 from src.cli.adapters.interactive_console import InteractiveConsoleUI
 from src.project_creator import ProjectCreator
 from src.core.infrastructure.file_manager import FileManager
@@ -16,7 +17,11 @@ def main():
     try:
         config = ask_project_config(ui)
 
-        file_manager = FileManager(".") 
+        project_full_path = os.path.join(config.path, config.name)
+        project_full_path = os.path.abspath(project_full_path)
+
+        file_manager = FileManager(project_full_path)
+
         runner = CommandRunner()
 
         creator = ProjectCreator(file_manager, runner)
